@@ -223,3 +223,4 @@ Las contribuciones son bienvenidas. Por favor, crea un issue para discutir los c
 ## Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
