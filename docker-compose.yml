@@ -1,0 +1,75 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: authenology-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-authenology}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-authenology_pwd}
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mailer:
+    build:
+      context: ./mailer
+      dockerfile: Dockerfile
+    container_name: authenology-mailer
+    restart: always
+    ports:
+      - "8081:80"
+    env_file:
+      - .env
+    environment:
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-Authenology Bot}
+      SMTP_SECURE: ${SMTP_SECURE:-tls}
+      SMTP_AUTH: ${SMTP_AUTH:-true}
+      SMTP_ALLOW_SELF_SIGNED: ${SMTP_ALLOW_SELF_SIGNED:-false}
+      SMTP_VERIFY_PEER: ${SMTP_VERIFY_PEER:-true}
+      SMTP_VERIFY_PEER_NAME: ${SMTP_VERIFY_PEER_NAME:-true}
+      MAILER_DEBUG: ${MAILER_DEBUG:-false}
+      # QR validator settings (used by verify.php)
+      QR_SECRET: ${QR_SECRET:-}
+      QR_TTL_SECONDS: ${QR_TTL_SECONDS:-604800}
+      QR_REDIRECT_BASE: ${QR_REDIRECT_BASE:-https://app.authenology.com.ve}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ > /dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: authenology-bot
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailer:
+        condition: service_started
+    env_file:
+      - .env
+    environment:
+      # Override DB URLs to use docker network hostnames
+      APPOINTMENTS_DB_URL: ${APPOINTMENTS_DB_URL:-postgresql+psycopg2://${POSTGRES_USER:-authenology}:${POSTGRES_PASSWORD:-authenology_pwd}@postgres:5432/appointments_db}
+      QUESTIONS_DB_URL: ${QUESTIONS_DB_URL:-postgresql+psycopg2://${POSTGRES_USER:-authenology}:${POSTGRES_PASSWORD:-authenology_pwd}@postgres:5432/questions_db}
+      MAILER_URL: ${MAILER_URL:-http://mailer}
+      QR_BASE_URL: ${QR_BASE_URL:-https://app.authenology.com.ve}
+      QR_SECRET: ${QR_SECRET:-}
+    command: ["python", "bot.py"]
+
+volumes:
+  pgdata:

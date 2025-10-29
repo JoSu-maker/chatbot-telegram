@@ -1,0 +1,34 @@
+# VCS
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info
+.eggs
+venv
+.mypy_cache
+.pytest_cache
+
+# Secrets
+.env
+.env.*
+credentials.json
+token.pickle
+
+# OS/Editor
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Docker local volumes
+pgdata
+
+# PHP vendor (will be installed in container)
+mailer/vendor
+composer.lock

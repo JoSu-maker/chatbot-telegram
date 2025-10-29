@@ -1,0 +1,14 @@
+{
+  "name": "authenology/mailer",
+  "description": "Simple mailer microservice using PHPMailer",
+  "type": "project",
+  "require": {
+    "phpmailer/phpmailer": "^6.9",
+    "endroid/qr-code": "^4.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mailer\\": "src/"
+    }
+  }
+}

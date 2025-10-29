@@ -1,0 +1,9 @@
+python-telegram-bot[rate-limiter]==20.8
+python-dotenv==1.0.0
+sqlalchemy==2.0.25
+SpeechRecognition==3.10.0
+pydub==0.25.1
+python-dateutil==2.8.2
+pytz==2023.3.post1
+requests==2.31.0
+psycopg2-binary==2.9.9

@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+.dist/
+build/
+dist/
+.mypy_cache/
+.pytest_cache/
+*.log
+
+# Virtual env
+venv/
+.env
+.env.*
+!.env.example
+
+# Credentials and tokens
+credentials.json
+token.pickle
+*.db
+*.sqlite3
+
+# Editors/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+
+# Docker
+pgdata/
+docker-data/
+
+# PHP (mailer)
+mailer/vendor/
+composer.lock
+
+# Node (if present)
+node_modules/
